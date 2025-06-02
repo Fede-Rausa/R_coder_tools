@@ -2,6 +2,9 @@
 train_test_split = function(df, tr_prp, yname=NULL, seed=NULL){
 #tr_prp is a value between 0 and 1 that is 
 #the proportion of rows of df that goes to the training set
+
+#yname is the name of the target variable
+#if not provide, then the train test split will not be stratified
   
   if (!is.null(seed)){
     set.seed(seed)
