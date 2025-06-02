@@ -13,6 +13,19 @@ dummy_id = function(df){
 }
 
 
+## similar to the select function of dplyr
+## varnames are the names of the columns that should be extracted
+## if exclude is TRUE then is returned the dataframe withouth that columns
+select_cols = function(df, varnames, exclude=F){
+  if (exclude){
+    bool = !(colnames(df) %in% varnames)
+  }else{
+    bool = (colnames(df) %in% varnames)
+  }
+  return(df[,bool])
+}
+
+
 
 ##get the types of the columns of a data frame
 col_types = function(df){
