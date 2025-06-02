@@ -1,8 +1,12 @@
 
 
-
+###### unscale ------------
 
 unscale = function(scaled_data, scales=NULL, centers=NULL, c0=F){
+#scaled_data should be an output of the scale function
+#with unscale, setting scales and centers, 
+#you can adjust the mean and variance of your distributions
+
   if (is.null(centers)){
     if (c0){
       p = ncol(scaled_data)
