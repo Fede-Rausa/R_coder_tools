@@ -1,4 +1,19 @@
 
+##find the idexes of the columns of a data frame
+dummy_id = function(df){
+  #returns the indexes of the columns of df that are dummy variables
+  C = ncol(df)
+  cond = numeric(C)
+  for (i in 1:C){
+    col = df[,i]
+    n = length(unique(col[!is.na(col)]))
+    cond[i] = (n==2)
+  }
+  return(which(as.logical(cond)))
+}
+
+
+
 ##get the types of the columns of a data frame
 col_types = function(df){
   df = as.data.frame(df)
