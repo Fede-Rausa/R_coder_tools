@@ -22,8 +22,30 @@ unscale = function(scaled_data, scales=NULL, centers=NULL, c0=F){
 }
 
 
-####### kmeans ----------
 
+predict_cluster = function(df, centers){
+  ##df is a dataframe or a matrix
+  ##centers is a matrix with the same number of columns
+  ##of df
+  
+  n = nrow(df)
+  k = nrow(centers)
+  clu = numeric(n)  
+  
+  for (i in 1:n){
+    d = numeric(k)
+    for (j in 1:k){
+      d[j] = sum((df[i,] - centers[j,])^2)
+    }
+    clu[i] = which.min(d)
+  }
+  
+  return(clu)
+}
+
+
+
+####### kmeans -------------------------------------
 model_kmeans = function(train, test, yname=NULL,
                         error_fun=error_MAE,
                         params=list(include_y=F, 
@@ -66,12 +88,20 @@ model_kmeans = function(train, test, yname=NULL,
   s_scale = attr(scaled_df, "scaled:scale")
   names(s_center) = names(s_scale) = names(scale_w) = coordinates
 
-  
   scaled_df0 = unscale(scaled_df, scales=scale_w, c0=T)
-  model = kmeans(scaled_df0, centers=params$k)
+  
+  seed = params$seed
+  if (is.null(seed)){
+    model = kmeans(scaled_df0, centers=params$k)
+  }else{
+    set.seed(seed)
+    model = kmeans(scaled_df0, centers=params$k)
+  }
+  
   ce = model$centers
   colnames(ce) = coordinates
   coors = coordinates[coordinates!=yname]
+  
   
   
   pred_clu = function(df){
@@ -88,17 +118,7 @@ model_kmeans = function(train, test, yname=NULL,
     
     ce0 = ce[,coors0]
     
-    n = nrow(dfmat)
-    k = nrow(ce0)
-    clu = numeric(n)  
-    
-    for (i in 1:n){
-      d = numeric(k)
-      for (j in 1:k){
-        d[j] = sum((dfmat[i,] - ce0[j,])^2)
-      }
-      clu[i] = which.min(d)
-    }
+    clu = predict_cluster(dfmat, ce0)
     
     return(clu)
   }
@@ -192,8 +212,8 @@ model_kmeans = function(train, test, yname=NULL,
 
 
 
-####### PAM -----------
 
+######## pam ---------------------------------------
 
 library(cluster)
 
@@ -242,7 +262,17 @@ model_pam = function(train, test, yname=NULL,
   
   
   scaled_df0 = unscale(scaled_df, scales=scale_w, c0=T)
-  model = pam(scaled_df0, k=params$k)
+  
+  
+  seed = params$seed
+  if (is.null(seed)){
+    model = pam(scaled_df0, k=params$k)
+  }else{
+    set.seed(seed)
+    model = pam(scaled_df0, k=params$k)
+  }
+  
+  
   ce = model$medoids
   colnames(ce) = coordinates
   
@@ -254,28 +284,19 @@ model_pam = function(train, test, yname=NULL,
       stop('No coordinates found in the dataframe')
     }
     
-    
     dfmat = as.matrix(unscale(scale(df[, coors0], 
                                     center=s_center[coors0], 
                                     scale=s_scale[coors0]), 
                               scales=scale_w[coors0], c0=T))
     
     ce0 = ce[,coors0]
-    n = nrow(dfmat)
-    k = nrow(ce0)
-    clu = numeric(n) 
     
-    for (i in 1:n){
-      d = numeric(k)
-      for (j in 1:k){
-        d[j] = sum((dfmat[i,] - ce0[j,])^2)
-      }
-      clu[i] = which.min(d)
-    }
+    clu = predict_cluster(dfmat, ce0)
     
     return(clu)
   }
   
+
   
   build_y_dict = function(clusters, yvec, median=T){
     
@@ -371,8 +392,3 @@ model_pam = function(train, test, yname=NULL,
               y_dict=y_dict
   ))
 }
-
-
-
-
-
