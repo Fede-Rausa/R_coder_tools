@@ -2,6 +2,10 @@
 
 library(caret)
 
+
+source('https://raw.githubusercontent.com/Fede-Rausa/R_coder_tools/refs/heads/main/functions/preprocess/TrainTestSplit.R')
+
+
 bootstrap_error = function(df, yname, error_fun, model_fun, 
                       niter=3, tr_prp = 0.7, seed=42,
                       params=list()){
