@@ -137,7 +137,7 @@ model_localwls = function(train, test, yname,
   if (!params$rm_coordinates){
     varinputs = colnames(train)
   }else{
-    varinputs = colnames(train)[colnames(train) %in% params$coordinates]
+    varinputs = colnames(train)[!(colnames(train) %in% params$coordinates)]
   }
   
   if (is.null(params$p)){
