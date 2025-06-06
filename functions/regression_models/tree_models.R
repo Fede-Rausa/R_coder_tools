@@ -9,7 +9,7 @@ model_tree = function(train, test, yname,
                        method='anova', minbucket=20,
                        cp=0.01, xval=1
                      )){
-  #mibucket is the minimum number of observations that should fall in a leaf
+  
   N = nrow(train)
   
   if(is.null(params$method)){
@@ -28,6 +28,13 @@ model_tree = function(train, test, yname,
     params$xval=1
   }
   
+  # if (params$method == 'class'){
+  #   train[,yname] = factor(train[,yname], 
+  #                           levels=unique(train[,yname]))
+  #   test[,yname] = factor(test[,yname], 
+  #                         levels=levels(train[,yname]))
+  # }
+  
   f = formula(paste0(yname, '~.'))
   model = rpart(f, data = train, method=params$method, weights=params$w,
                 control = rpart.control(
@@ -37,12 +44,13 @@ model_tree = function(train, test, yname,
                   xval=params$xval))
   
   pred = function(df){
-    preds = predict(model, df)
+    if (params$method=='anova'){
+      preds = predict(model, df)
+    }else{
+      preds = predict(model, df, type='class')
+    }
     return(preds)
   }
-  
-  
-  
   
   train_preds = pred(train)
   test_preds = pred(test)
@@ -50,25 +58,39 @@ model_tree = function(train, test, yname,
   train_error = error_fun(train_preds, train[,yname])
   test_error = error_fun(test_preds, test[,yname])
   
-  train_residuals = train_preds - train[,yname]
-  test_residuals = test_preds - test[,yname]
+  if (params$method=='anova'){
+    train_residuals = train_preds - train[,yname]
+    test_residuals = test_preds - test[,yname]
+  }else{
+    train_residuals = NULL
+    test_residuals = NULL
+  }
+
   
-  
-  
-  id0 = round(train_preds)
+  if (params$method=='anova'){
+    id0 = round(train_preds)
+  }else{
+    id0 = train_preds
+  }
   id1 = unique(id0)
   dict = rank(id1)
   names(dict) = id1
   
   
   pred_clu = function(df){
-    indexes = as.character(round(pred(df)))
+    if (params$method=='anova'){
+      indexes = as.character(round(pred(df)))
+    }else{
+      indexes = as.character(pred(df))
+    }
     clusters = dict[indexes]
     return(clusters)
   }
   
+  if (params$method=='anova'){
+    id0[id0<0] = 1
+  }
   
-  id0[id0<0] = 1
 
   train_clu = dict[id0]
   test_clu = pred_clu(test)
