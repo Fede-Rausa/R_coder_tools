@@ -52,7 +52,7 @@ library(glmnet)
 model_elnet = function(train, test, yname, 
                         error_fun=error_MAE, params=list(
                           alpha=NULL, w = NULL, lambda=0.5,
-                          type='lasso', nlambda=1)){
+                          type='lasso', nlambda=1, standardize=F)){
   
   if (is.null(params$alpha)){
     if (params$type=='lasso'){
@@ -67,6 +67,10 @@ model_elnet = function(train, test, yname,
       }
     }
   }
+
+  if (is.null(params$standardize)){
+    params$standardize = F
+  }
   
   if (is.null(params$lambda)){
     params$lambda = 0.01
@@ -76,7 +80,8 @@ model_elnet = function(train, test, yname,
   input = train[,inputvars]
   output = train[,yname]
   model = glmnet(input, output, weights = params$w,  lambda=params$lambda,
-                 alpha=params$alpha, family='gaussian')
+                 alpha=params$alpha, family='gaussian', 
+                 standardize=params$standardize)
   
   pred = function(df){
     input = as.matrix(df[,inputvars])
