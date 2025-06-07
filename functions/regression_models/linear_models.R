@@ -202,7 +202,7 @@ model_localwls = function(train, test, yname,
   olsB = wls_solve(X, Y, rep(1, length(Y)))
   
   
-  pred = function(df){
+  pred = function(df, ecount=F){
     
     coordf0 = scale(df[,params$coordinates], 
                     center = means, scale = devstd)
@@ -213,6 +213,7 @@ model_localwls = function(train, test, yname,
     dmat0 = dmat[-(1:n),  -((n+1):ncol(dmat))]
     
     predf = df[, varinputs[varinputs!=yname]]
+    err_count = 0
     
     pred_wls = numeric(nrow(df))
     for (i in 1:nrow(df)){
@@ -223,12 +224,16 @@ model_localwls = function(train, test, yname,
       #pred_wls[i] = t(B) %*% t(row)
 
       B = tryCatch(expr = wls_solve(X, Y, wfun(dmat0[i,])), 
-                   error=function(msg){olsB})
+                     error=function(msg){
+                     err_count = err_count + 1
+                     return(olsB)})
       
       
       pred_wls[i] = t(B) %*% t(as.matrix(predf[i,]))
     }
-
+    #if(ecount){
+    print(paste0('errors count: ', err_count, '  errors ratio: ', err_count/nrow(df)))  
+    #}
     return(pred_wls)
   }
   
