@@ -119,6 +119,7 @@ model_elnet = function(train, test, yname,
 model_localwls = function(train, test, yname,
                           error_fun=error_MAE, 
                           params=list(
+                          predict_train = FALSE,
                           coordinates = NULL,
                           rm_coordinates = F,
                           distance='euclidean', 
@@ -141,6 +142,11 @@ model_localwls = function(train, test, yname,
   if(is.null(params$ecount)){
     params$ecount = F
   }
+  if(is.null(params$predict_train)){
+    params$predict_train = F
+  }
+
+  
   
   if (is.null(params$distance)){
     params$distance = 'euclidean'
@@ -264,14 +270,26 @@ model_localwls = function(train, test, yname,
     return(pred_wls)
   }
   
+
+  if (params$predict_train){
+    train_preds = pred(train)
+    train_error = error_fun(train_preds, train[,yname])
+    train_error = error_fun(train_preds, train[,yname])
+    train_residuals = train_preds - train[,yname]
+  }else{
+    train_preds = NULL
+    train_error = NULL
+    train_error = NULL
+    train_residuals = NULL
+  }
+
   
-  train_preds = pred(train)
   test_preds = pred(test)
   
-  train_error = error_fun(train_preds, train[,yname])
+  
   test_error = error_fun(test_preds, test[,yname])
   
-  train_residuals = train_preds - train[,yname]
+  
   test_residuals = test_preds - test[,yname]
 
   return(list(predict=pred, 
