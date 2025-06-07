@@ -1,12 +1,20 @@
 
-library(rpart)
+### default loss --------
+
+error_misclass = function(preds, y){
+  tab = table(preds, y)
+  N = length(y)
+  acc = sum(diag(tab))/N
+  return(1 - acc)
+}
 
 
 ####### classif tree ----------
 
+library(rpart)
 
 model_ctree = function(train, test, yname, 
-                       error_fun, params=list(
+                       error_fun = error_misclass, params=list(
                          method='class', minbucket=20,
                          cp=0.01, xval=1
                        )){
