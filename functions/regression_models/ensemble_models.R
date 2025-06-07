@@ -81,7 +81,7 @@ boost_model = function(train, test, yname,
 
 
 bagging_model = function(train, test, yname, model_fun, 
-                         error_fun= = error_MAE,
+                         error_fun = error_MAE,
                          nrounds=10, replace=T,
                          nobs = NULL, nvars=NULL, 
                          params=list()){
