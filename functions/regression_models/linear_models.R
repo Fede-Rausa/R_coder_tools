@@ -169,7 +169,8 @@ model_localwls = function(train, test, yname,
   f = formula(paste0(yname, '~.'))
   n = nrow(train)
   
-  X = as.matrix(traindf[,colnames(traindf)!=yname])
+  X = cbind(rep(1, nrow(traindf)), 
+            as.matrix(traindf[,colnames(traindf)!=yname]))
   Y = as.matrix(traindf[,yname])
   
   
@@ -216,7 +217,8 @@ model_localwls = function(train, test, yname,
     dmat = as.matrix(dist(coordf1, method=params$distance, p=params$p))
     dmat0 = dmat[-(1:n),  -((n+1):ncol(dmat))]
     
-    predf = df[, varinputs[varinputs!=yname]]
+    predf = as.matrix(cbind(rep(1, nrow(df)), 
+                      df[, varinputs[varinputs!=yname]]))
     err_count = 0
     
     pred_wls = numeric(nrow(df))
@@ -233,7 +235,7 @@ model_localwls = function(train, test, yname,
                      return(olsB)})
       
       
-      pred_wls[i] = t(B) %*% t(as.matrix(predf[i,]))
+      pred_wls[i] = t(B) %*% predf[i,]
     }
     if(params$ecount){
     print(paste0('errors count: ', err_count, '  errors ratio: ', err_count/nrow(df)))  
