@@ -1,6 +1,13 @@
 
 ### default loss ----
 
+error_misclass = function(preds, y){
+  tab = table(preds, y)
+  N = length(y)
+  acc = sum(diag(tab))/N
+  return(1 - acc)
+}
+
 
 #### multinomial logistic regression ---------------
 
