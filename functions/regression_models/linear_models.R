@@ -40,7 +40,9 @@ model_wls = function(train, test, yname,
               train_error=train_error, 
               test_error=test_error,
               train_residuals=train_residuals,
-              test_residuals=test_residuals))
+              test_residuals=test_residuals,
+              train_preds = train_preds,
+              test_preds = test_preds))
 }
 
 
@@ -103,7 +105,9 @@ model_elnet = function(train, test, yname,
               train_error=train_error, 
               test_error=test_error,
               train_residuals=train_residuals,
-              test_residuals=test_residuals))
+              test_residuals=test_residuals,
+              train_preds = train_preds,
+              test_preds = test_preds))
   
 }
 
@@ -274,6 +278,8 @@ model_localwls = function(train, test, yname,
              train_error=train_error,
              test_error=test_error,
              train_residuals=train_residuals,
-             test_residuals=test_residuals))
+             test_residuals=test_residuals,
+              train_preds = train_preds,
+              test_preds = test_preds))
 }
 
