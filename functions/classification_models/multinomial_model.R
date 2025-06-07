@@ -1,9 +1,12 @@
 
+### default loss ----
+
+
 #### multinomial logistic regression ---------------
 
 library(VGAM)
 
-model_multilogit = function(train, test, yname, error_fun,
+model_multilogit = function(train, test, yname, error_fun = error_misclass,
                             params=list()){
   
   library(VGAM)
