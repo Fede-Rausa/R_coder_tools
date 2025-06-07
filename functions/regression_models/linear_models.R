@@ -119,7 +119,8 @@ model_localwls = function(train, test, yname,
                           rm_coordinates = F,
                           distance='euclidean', 
                           wfun = NULL,
-                          p = 2)){
+                          p = 2,
+                          ecount=F)){
   
   
   if (is.null(params$coordinates)){
@@ -132,6 +133,9 @@ model_localwls = function(train, test, yname,
     wfun = function(d){return(20*(max(d) - d)^10)}
   }else{
     wfun = params$wfun
+  }
+  if(is.null(params$ecount)){
+    params$ecount = F
   }
   
   if (is.null(params$distance)){
@@ -231,9 +235,9 @@ model_localwls = function(train, test, yname,
       
       pred_wls[i] = t(B) %*% t(as.matrix(predf[i,]))
     }
-    #if(ecount){
+    if(params$ecount){
     print(paste0('errors count: ', err_count, '  errors ratio: ', err_count/nrow(df)))  
-    #}
+    }
     return(pred_wls)
   }
   
