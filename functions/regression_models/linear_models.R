@@ -196,6 +196,10 @@ model_localwls = function(train, test, yname,
     #Xty <- crossprod(X_weighted, y_weighted)  # t(X_weighted) %*% y_weighted
     #return(solve(XtX, Xty))
   }
+
+  # basic linear regression for error handling
+
+  olsB = wls_solve(X, Y, rep(1, length(Y)))
   
   
   pred = function(df){
@@ -217,7 +221,12 @@ model_localwls = function(train, test, yname,
       #B = wls_solve(X, Y, W)
       #row = as.matrix(predf[i,])
       #pred_wls[i] = t(B) %*% t(row)
-      pred_wls[i] = t(wls_solve(X, Y, wfun(dmat0[i,]))) %*% t(as.matrix(predf[i,]))
+
+      B = tryCatch(expr = wls_solve(X, Y, wfun(dmat0[i,])), 
+                   error=function(msg){olsB})
+      
+      
+      pred_wls[i] = t(B) %*% t(as.matrix(predf[i,]))
     }
 
     return(pred_wls)
