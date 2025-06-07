@@ -187,6 +187,11 @@ model_localwls = function(train, test, yname,
     return(beta_hat)
   }
 
+  ols_QR <- function(X, y) {
+    qr_obj <- qr(X)
+    qr.coef(qr_obj, y)
+  }
+
   
   wls_solve <- function(X, y, w) {
     sqrt_w <- sqrt(w)
@@ -194,17 +199,24 @@ model_localwls = function(train, test, yname,
     X_weighted <- X * sqrt_w  # Broadcasting: each row multiplied by its weight
     y_weighted <- y * sqrt_w
 
-    B = ols_chol(X_weighted, y_weighted)
-    return(B)
+    #B = ols_chol(X_weighted, y_weighted)
+    #return(B)
     
-    #XtX <- crossprod(X_weighted)      # t(X_weighted) %*% X_weighted
-    #Xty <- crossprod(X_weighted, y_weighted)  # t(X_weighted) %*% y_weighted
-    #return(solve(XtX, Xty))
+    XtX <- crossprod(X_weighted)      # t(X_weighted) %*% X_weighted
+    Xty <- crossprod(X_weighted, y_weighted)  # t(X_weighted) %*% y_weighted
+    return(solve(XtX, Xty))
+  }
+
+  wls_QR = function(X,y,w){
+    sqrt_w <- sqrt(w)
+    X_weighted <- X * sqrt_w  # Broadcasting: each row multiplied by its weight
+    y_weighted <- y * sqrt_w
+    return(ols_QR(X_weighted, y_weighted))
   }
 
   # basic linear regression for error handling
 
-  olsB = wls_solve(X, Y, rep(1, length(Y)))
+  olsB = ols_QR(X, Y)
   
   
   pred = function(df, ecount=F){
@@ -232,7 +244,12 @@ model_localwls = function(train, test, yname,
       B = tryCatch(expr = wls_solve(X, Y, wfun(dmat0[i,])), 
                      error=function(msg){
                      err_count <<- err_count + 1
-                     return(olsB)})
+                     return(tryCatch(
+                       expr = wls_QR(X, Y, wfun(dmat0[i,])),
+                       error = function(msg){
+                         err_count <<- err_count + 1
+                         return(olsB)
+                       }))})
       
       
       pred_wls[i] = t(B) %*% predf[i,]
