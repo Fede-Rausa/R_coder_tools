@@ -1,12 +1,18 @@
 
-# model_fun should be a function from the script supervised_regressions.R or clustering_models.R
+### default loss ---
+
+error_MAE = function(preds, y){
+  return(mean(abs(preds - y)))
+}
 
 
 ######### boosting --------------
 
+# model_fun should be a function from the script supervised_regressions.R or clustering_models.R
+
 
 boost_model = function(train, test, yname, 
-                       error_fun, model_fun,  
+                       error_fun = error_MAE, model_fun,  
                        nrounds = 20, lr = 0.1, stocastic = F, 
                        tr_prp = 0.5, params=list()){
   
@@ -75,7 +81,7 @@ boost_model = function(train, test, yname,
 
 
 bagging_model = function(train, test, yname, model_fun, 
-                         error_fun=error_MAE,
+                         error_fun= = error_MAE,
                          nrounds=10, replace=T,
                          nobs = NULL, nvars=NULL, 
                          params=list()){
@@ -144,7 +150,7 @@ bagging_model = function(train, test, yname, model_fun,
 
 ######### bagging + boosting or boosting + bagging --------------
 
-bagboost_model = function(train, test, yname, error_fun, 
+bagboost_model = function(train, test, yname, error_fun = error_MAE, 
                           model_fun, params=list(),
                           first_bagging = T,
                           nrounds_bag=10, replace=T,
