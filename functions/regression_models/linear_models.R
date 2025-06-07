@@ -225,7 +225,7 @@ model_localwls = function(train, test, yname,
 
       B = tryCatch(expr = wls_solve(X, Y, wfun(dmat0[i,])), 
                      error=function(msg){
-                     err_count = err_count + 1
+                     err_count <<- err_count + 1
                      return(olsB)})
       
       
