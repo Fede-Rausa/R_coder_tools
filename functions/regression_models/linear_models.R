@@ -1,8 +1,15 @@
 
+## default loss ---
+
+error_MAE = function(preds, y){
+  return(mean(abs(preds - y)))
+}
+
+
 ######### ols, wls from lm ---------------
 
 model_wls = function(train, test, yname, 
-                     error_fun, params=list()){
+                     error_fun=error_MAE, params=list()){
   
   N = nrow(train)
   
@@ -43,7 +50,7 @@ model_wls = function(train, test, yname,
 library(glmnet)
 
 model_elnet = function(train, test, yname, 
-                        error_fun, params=list(
+                        error_fun=error_MAE, params=list(
                           alpha=NULL, w = NULL, lambda=0.5,
                           type='lasso', nlambda=1)){
   
@@ -101,7 +108,7 @@ model_elnet = function(train, test, yname,
 
 
 model_localwls = function(train, test, yname,
-                          error_fun, 
+                          error_fun=error_MAE, 
                           params=list(
                           coordinates = NULL,
                           rm_coordinates = F,
