@@ -170,15 +170,31 @@ model_localwls = function(train, test, yname,
   
   
   # Efficient WLS implementation
+
+  # Ordinary least squares with Cholesky
+  ols_chol <- function(X, y) {
+    XtX <- crossprod(X)
+    Xty <- crossprod(X, y)
+    R <- chol(XtX)
+    #backsolve and forwardsolve are the functions
+    #that solve uses
+    beta_hat <- backsolve(R, forwardsolve(t(R), Xty))
+    return(beta_hat)
+  }
+
+  
   wls_solve <- function(X, y, w) {
     sqrt_w <- sqrt(w)
     
     X_weighted <- X * sqrt_w  # Broadcasting: each row multiplied by its weight
     y_weighted <- y * sqrt_w
 
-    XtX <- crossprod(X_weighted)      # t(X_weighted) %*% X_weighted
-    Xty <- crossprod(X_weighted, y_weighted)  # t(X_weighted) %*% y_weighted
-    return(solve(XtX, Xty))
+    B = ols_chol(X_weighted, y_weighted)
+    return(B)
+    
+    #XtX <- crossprod(X_weighted)      # t(X_weighted) %*% X_weighted
+    #Xty <- crossprod(X_weighted, y_weighted)  # t(X_weighted) %*% y_weighted
+    #return(solve(XtX, Xty))
   }
   
   
