@@ -1,10 +1,14 @@
+## default loss ---
 
+error_MAE = function(preds, y){
+  return(mean(abs(preds - y)))
+}
 
 ######### rpart regression tree ----------------------------
 
 
 model_rtree = function(train, test, yname, 
-                      error_fun, params=list(
+                      error_fun=error_MAE, params=list(
                         minbucket=20,
                         cp=0.01, xval=1
                       )){
@@ -84,7 +88,7 @@ model_rtree = function(train, test, yname,
 library(randomForest)
 
 model_rf = function(train, test, yname, 
-                    error_fun, params=list()){
+                    error_fun=error_MAE, params=list()){
   
   
   
@@ -134,7 +138,7 @@ model_rf = function(train, test, yname,
 
 library(xgboost)
 model_xgb = function(train, test, yname, 
-                    error_fun, params=list()){
+                    error_fun=error_MAE, params=list()){
   
   
   
