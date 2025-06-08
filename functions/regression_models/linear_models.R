@@ -312,7 +312,8 @@ library(grpreg)
 model_grpreg = function(train, test, yname, error_fun, 
                         params=list(group = NULL,
                                     penalty='grLasso',
-                                    sel = NULL)){
+                                    sel = NULL,
+                                    lambda=NULL)){
   
   if (is.null(params$group)){
     params$group = 1:(ncol(train)-1)
@@ -326,11 +327,16 @@ model_grpreg = function(train, test, yname, error_fun,
     stop('number of group members and predictors should be equal')
   }
   
+  if (is.null(params$lambda)){
+    params$lambda = 0.00000000001
+  }
+  
   
   model = grpreg(train[,params$sel], 
                  train[,yname], 
                  group=params$group, 
-                 penalty=params$penalty)
+                 penalty=params$penalty,
+                 lambda=params$lambda)
   
   
   pred = function(df){
