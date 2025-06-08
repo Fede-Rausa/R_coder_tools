@@ -68,6 +68,8 @@ boost_model = function(train, test, yname,
   test_residuals = test_preds - test[,yname]
   
   return(list(predict=pred,
+              train_preds = train_preds,
+              test_preds = test_preds,
               train_error=train_error,
               test_error = test_error,
               train_residuals = train_residuals,
@@ -138,6 +140,8 @@ bagging_model = function(train, test, yname, model_fun,
   test_residuals = test_preds - test[,yname]
   
   return(list(predict=pred,
+              train_preds = train_preds,
+              test_preds = test_preds,
               train_error=train_error,
               test_error = test_error,
               train_residuals = train_residuals,
