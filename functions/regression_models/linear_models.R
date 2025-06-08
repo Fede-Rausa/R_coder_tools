@@ -301,3 +301,66 @@ model_localwls = function(train, test, yname,
               test_preds = test_preds))
 }
 
+
+
+
+############ group penalized regression -----------------------------
+
+
+library(grpreg)
+
+model_grpreg = function(train, test, yname, error_fun, 
+                        params=list(group = NULL,
+                                    penalty='grLasso',
+                                    sel = NULL)){
+  
+  if (is.null(params$group)){
+    params$group = 1:(ncol(train)-1)
+  }
+  
+  if (is.null(params$sel)){
+    params$sel = colnames(train)[colnames(train)!=yname]
+  }
+  
+  if (length(params$sel) != length(params$group)){
+    stop('number of group members and predictors should be equal')
+  }
+  
+  
+  model = grpreg(train[,params$sel], 
+                 train[,yname], 
+                 group=params$group, 
+                 penalty=params$penalty)
+  
+  
+  pred = function(df){
+    input = as.matrix(df[,params$sel])
+    preds = predict(model, input)
+    return(preds)
+  }
+  
+  train_preds = pred(train)
+  test_preds = pred(test)
+  
+  train_error = error_fun(train_preds, train[,yname])
+  test_error = error_fun(test_preds, test[,yname])
+  
+  train_residuals = train_preds - train[,yname]
+  test_residuals = test_preds - test[,yname]
+  
+  return(list(model=model, 
+              predict=pred,
+              train_error=train_error, 
+              test_error=test_error,
+              train_preds = train_preds,
+              test_preds = test_preds,
+              train_residuals=train_residuals,
+              test_residuals=test_residuals))
+  
+}
+
+
+
+
+
+
