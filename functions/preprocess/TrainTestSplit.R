@@ -18,8 +18,8 @@ train_test_split = function(df, tr_prp, yname=NULL, seed=NULL){
   }
   
   if (stratified){
-    y = df[,yname]
-    id_train = createDataPartition(y, 1, p = tr_prp)[[1]]
+    y = unlist(df[,yname])
+    id_train = caret::createDataPartition(y, 1, p = tr_prp)[[1]]
   }else{
     id_train = sample(1:N, floor(tr_prp*N))
   }
