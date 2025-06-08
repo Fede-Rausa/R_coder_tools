@@ -156,11 +156,10 @@ model_xgb = function(train, test, yname,
     params$eta = 0.1
   }
   
-  model = xgboost(params = list(eta=params$eta, 
-                                max_depth=params$max_depth),
+  model = xgboost(params = params,
                  data = as.matrix(train[, -which(colnames(train) == yname)]),
                  label = train[,yname],
-                 nrounds = params$nrounds,
+                 ################nrounds = params$nrounds,
                  early_stopping_rounds = 10,
                  verbose = 0)
   
