@@ -210,6 +210,70 @@ model_randomForest = function(train, test, yname,
 
 
 
+########## gbm -------------------------
+
+model_gbm = function(train, test, yname, 
+                    error_fun, params=list()){
+    
+  library(gbm)
+
+  if (is.null(params$nrounds)){
+    params$ntree = 100
+  }
+  if (is.null(params$max_depth)){
+    params$max_depth = 1
+  }
+  if (is.null(params$lr)){
+    params$lr = 0.1
+  }
+  if (is.null(params$min.node.size)){
+    params$min.node.size = 1
+  }
+  if (is.null(params$sample.fraction)){
+    params$sample.fraction = 0.5
+  }
+
+
+
+  f = as.formula(paste0(yname, '~.'))
+  model = gbm(f, train,
+              n.trees = params$ntree,
+              shrinkage = params$lr,
+              interaction.depth = params$max_depth,
+              bag.fraction = params$sample.fraction,
+              distribution = 'gaussian')
+
+  pred = function(df){
+    preds = predict(model, df)
+    return(preds)
+  }
+
+
+  train_preds = pred(train)
+  test_preds = pred(test)
+
+  train_error = error_fun(train_preds, train[,yname])
+  test_error = error_fun(test_preds, test[,yname])
+
+  train_residuals = train_preds - train[,yname]
+  test_residuals = test_preds - test[,yname]
+
+  return(list(model=model,
+              predict=pred,
+              train_preds = train_preds,
+              test_preds = test_preds,
+              train_error=train_error,
+              test_error=test_error,
+              train_residuals=train_residuals,
+              test_residuals=test_residuals))
+}
+
+
+
+
+
+
+
 ########### xgb ---------------
 
 library(xgboost)
