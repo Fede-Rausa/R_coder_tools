@@ -212,10 +212,10 @@ model_randomForest = function(train, test, yname,
 
 ########## gbm -------------------------
 
+library(gbm)
+
 model_gbm = function(train, test, yname, 
                     error_fun, params=list()){
-    
-  library(gbm)
 
   if (is.null(params$ntree)){
     params$ntree = 100
