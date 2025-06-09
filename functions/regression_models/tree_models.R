@@ -217,7 +217,7 @@ model_gbm = function(train, test, yname,
     
   library(gbm)
 
-  if (is.null(params$nrounds)){
+  if (is.null(params$ntree)){
     params$ntree = 100
   }
   if (is.null(params$max_depth)){
