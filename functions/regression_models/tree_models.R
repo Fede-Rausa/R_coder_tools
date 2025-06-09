@@ -29,6 +29,9 @@ model_rtree = function(train, test, yname,
   if(is.null(params$xval)){
     params$xval=1
   }
+  if (is.null(params$max_depth)){
+    params$max_depth = 30
+  }
   
   f = formula(paste0(yname, '~.'))
   model = rpart(f, data = train, method='anova', 
@@ -36,6 +39,7 @@ model_rtree = function(train, test, yname,
                 control = rpart.control(
                   minsplit = params$minsplit,
                   minbucket = params$minbucket,
+                  maxdepth = params$max_depth,
                   cp = params$cp,
                   xval=params$xval))
   
