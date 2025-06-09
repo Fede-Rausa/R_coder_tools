@@ -88,10 +88,79 @@ model_rtree = function(train, test, yname,
 ########## rf ------------
 
 library(randomForest)
+library(ranger)
 
-model_rf = function(train, test, yname, 
-                    error_fun=error_MAE, params=list()){
+model_ranger = function(train, test, yname, 
+                    error_fun, params=list()){
   
+  
+  if (is.null(params$ntree)){
+    params$ntree = 100
+  }
+  if (is.null(params$mtry)){
+    params$mtry = floor(sqrt(ncol(train)-1))
+  }
+  if (is.null(params$minbucket)){
+    params$minbucket = 1
+  }
+  if (is.null(params$max.depth)){
+    params$max.depth = 0
+  }
+  if (is.null(params$min.node.size)){
+    params$min.node.size = 5
+  }
+  if (is.null(params$replace)){
+    params$replace = T
+  }
+  if (is.null(params$sample.fraction)){
+    params$sample.fraction = ifelse(params$replace, 1, 0.632)
+  }
+  if (is.null(params$fixsplitvars)){
+    params$fixsplitvars = NULL
+  }
+  
+  
+  model = ranger(as.formula(paste0(yname, '~.')), 
+                 data=train, 
+                 num.trees= params$ntree,
+                 mtry = params$mtry,
+                 min.bucket = params$minbucket,
+                 max.depth = params$max.depth,
+                 min.node.size = params$min.node.size,
+                 sample.fraction = params$sample.fraction,
+                 replace = params$replace,
+                 always.split.variables = params$fixsplitvars,
+                 classification = F)
+    
+  
+  pred = function(df){
+    preds = predict(model, df)
+    return(preds$predictions)
+  }
+  
+  
+  train_preds = pred(train)
+  test_preds = pred(test)
+  
+  train_error = error_fun(train_preds, train[,yname])
+  test_error = error_fun(test_preds, test[,yname])
+  
+  train_residuals = train_preds - train[,yname]
+  test_residuals = test_preds - test[,yname]
+  
+  return(list(model=model, 
+              predict=pred, 
+              train_error=train_error, 
+              test_error=test_error,
+              train_residuals=train_residuals,
+              test_residuals=test_residuals,
+              train_preds = train_preds,
+              test_preds = test_preds))
+}
+
+
+model_randomForest = function(train, test, yname, 
+                    error_fun, params=list()){
   
   
   if (is.null(params$ntree)){
@@ -136,6 +205,9 @@ model_rf = function(train, test, yname,
               train_preds = train_preds,
               test_preds = test_preds))
 }
+
+
+
 
 
 ########### xgb ---------------
