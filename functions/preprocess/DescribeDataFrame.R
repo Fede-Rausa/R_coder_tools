@@ -1,4 +1,23 @@
 
+## make a description of vector
+describe_vec = function(vec, maxt=20){
+  N = length(vec)
+  cat('class:', class(vec), '  N =',N, '\n')
+  nac = sum(is.na(vec))
+  cat('NA count:', nac, '  NA ratio:', round(nac/N, 3), '\n')
+  if(!is.numeric(vec)){
+    tab = table(vec)
+    if (length(tab)<=maxt){
+      print(tab)
+    }else{
+      print(head(tab))
+    }
+  }else{
+    print(summary(vec))
+  }
+}
+
+
 ##find the idexes of the columns of a data frame
 dummy_id = function(df){
   #returns the indexes of the columns of df that are dummy variables
