@@ -56,7 +56,7 @@ agd = function(init, fun, niter=20, lr=0.1, h=1e-6,
   }
   
   
-  if (type == 'random') {
+  if (type == 'fdsa') {
     grad = function(t) {
       u = rnorm(p) 
       u = u / sqrt(sum(u^2))
@@ -65,7 +65,7 @@ agd = function(init, fun, niter=20, lr=0.1, h=1e-6,
     }
   }
   
-  if (type == 'fdsa') {
+  if (type == 'spsa') {
     grad = function(t) {
       delta = ifelse(rbinom(p, 1, 0.5), 1, -1)
       f_plus  = f(xmat[t,] + h*delta)
