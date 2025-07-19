@@ -1,5 +1,5 @@
 
-vet2onehot = function(vet, levels){
+vec2onehot = function(vet, levels){
   ## converts vec to a matrix, after levels are specified
   ## it returns a matrix where each column is a dummy
     L = length(levels)
@@ -17,7 +17,7 @@ vet2onehot = function(vet, levels){
 }
 
 
-onehot2vet = function(mat, levels){
+onehot2vec = function(mat, levels){
   ## it returns a vector from a one hot matrix
     L = length(levels)
     N = nrow(mat)   
