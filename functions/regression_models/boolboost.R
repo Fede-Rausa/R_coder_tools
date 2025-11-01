@@ -32,9 +32,15 @@ not = function(A){1-A}
 
 
 
-boolboost = function(df, yname, niter, maxnum, noderatio=1, xratio=1, 
+boolboost = function(df, yname, niter, maxnum=3, noderatio=1, xratio=1, 
                      enforceroot=F, enforcecomb=F, rooteach=0, 
                      enforceand=F, enforceor=F, andeach=0){
+
+##maxnum: number of dummy quantile thresholds for each continuous variable
+##noderatio: ratio of nodes randomly extracted
+##xratio: ratio of variables randomly extracted
+##rooteach: number of iterations after which a root node has to be selected
+
   
   dfx = df %>% dplyr::select(-yname)
   y = res = df[,yname]
