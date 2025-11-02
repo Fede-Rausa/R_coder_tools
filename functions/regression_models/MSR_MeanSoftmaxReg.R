@@ -20,8 +20,8 @@ MSR_model = function(train, yname, k=2, lr=0.01, niter=10,
     as.matrix() %>%
     scale() 
 
-  mycenters = attr(dfx,"scaled:center")
-  myscales = attr(dfx,"scaled:scale")
+  mycenters = c(attr(dfx,"scaled:center"), 1)
+  myscales = c(attr(dfx,"scaled:scale"), 0)
   
  dfx=dfx %>% 
     as.data.frame() %>%
