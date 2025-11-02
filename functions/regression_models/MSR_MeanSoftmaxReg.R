@@ -18,7 +18,12 @@ MSR_model = function(train, yname, k=2, lr=0.01, niter=10,
   dfx = train %>% 
     dplyr::select(-yname) %>% 
     as.matrix() %>%
-    scale() %>% 
+    scale() 
+
+  mycenters = attr(dfx,"scaled:center")
+  myscales = attr(dfx,"scaled:scale")
+  
+ dfx=dfx %>% 
     as.data.frame() %>%
     mutate(const=1) %>% 
     as.matrix()
