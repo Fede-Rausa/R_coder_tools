@@ -63,7 +63,7 @@ MSR_model = function(train, yname, k=2, lr=0.01, niter=10,
   pred = function(df){ #W is a matrix pxk
     dfx = df %>%
       as.matrix() %>%
-      scale() %>% 
+      scale(center=mycenters, scale=myscales) %>% 
       as.data.frame() %>%
       mutate(const=1) %>% 
       dplyr::select(xnames) %>% 
